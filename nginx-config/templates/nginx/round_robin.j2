@@ -1,0 +1,31 @@
+# nginx configuration for mirror-proxy.my.host
+
+upstream site3 {
+    server "{{ instance2 }}";
+    server "{{ instance3 }}";
+}
+
+upstream site4 {
+    server "{{ instance3 }}";
+    server "{{ instance4 }}";
+}
+
+server {
+    listen 80;
+    server_name mirror-proxy.my.host;
+
+    location / {
+        proxy_pass http://site3;
+    }
+
+}
+
+server {
+    listen 80;
+    server_name mirror-proxy.my.host;
+
+    location / {
+        proxy_pass http://site4;
+    }
+
+}

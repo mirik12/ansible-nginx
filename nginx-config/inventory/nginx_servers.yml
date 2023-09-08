@@ -1,0 +1,12 @@
+nginx_servers:
+  children:
+    mirror_proxy_host:
+      hosts:
+        mirror-proxy.my.host:
+    proxy_host:
+      hosts:
+        proxy.my.host:
+
+all:
+  children:
+    nginx_servers:

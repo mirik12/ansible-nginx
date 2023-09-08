@@ -1,0 +1,53 @@
+﻿---
+- name: Deploy nginx load balancer for proxy.my.host
+  hosts: nginx_servers
+  user: root
+
+  roles:
+    - name: Install NGINX
+      role: nginxinc.nginx
+      tags: nginx
+
+- name: Deploy mirror-proxy.my.host
+  hosts: mirror_proxy_host
+  tasks:
+    - name: Configure nginx for mirror-proxy.my.host
+      template:
+        src: round_robin.j2
+        dest: /etc/nginx/sites-available/mirror-proxy.my.host
+      notify:
+        - Reload Nginx
+
+    - name: Create symbolic link for mirror-proxy.my.host
+      file:
+        src: /etc/nginx/sites-available/mirror-proxy.my.host
+        dest: /etc/nginx/sites-enabled/mirror-proxy.my.host
+        state: link
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded
+
+- name: Deploy proxy.my.host
+  hosts: proxy_host
+  tasks:
+    - name: Configure nginx for proxy.my.host
+      template:
+        src: least_conn.j2
+        dest: /etc/nginx/sites-available/proxy.my.host
+      notify:
+        - Reload Nginx
+
+    - name: Create symbolic link for proxy.my.host
+      file:
+        src: /etc/nginx/sites-available/proxy.my.host
+        dest: /etc/nginx/sites-enabled/proxy.my.host
+        state: link
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded

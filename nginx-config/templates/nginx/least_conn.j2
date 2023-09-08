@@ -1,0 +1,39 @@
+# nginx configuration for proxy.my.host
+
+upstream site1 {
+    least_conn;
+
+    server "{{ instance2 }}";
+    server "{{ instance3 }}";
+}
+
+upstream site2 {
+    least_conn;
+
+    server "{{ instance3 }}";
+    server "{{ instance4 }}";
+}
+
+server {
+    listen 80;
+    server_name proxy.my.host;
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://site1;
+    }
+
+}
+
+server {
+    listen 80;
+    server_name proxy.my.host;
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://site2;
+    }
+
+}

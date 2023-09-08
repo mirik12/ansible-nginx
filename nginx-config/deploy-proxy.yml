@@ -1,0 +1,51 @@
+---
+- name: Deploy nginx load balancer for proxy.my.host
+  hosts: proxy.my.host
+  become: yes
+  roles:
+    - role: proxy_role
+  tasks:
+    - name: Configure nginx for proxy.my.host
+      template:
+        src: nginx-proxy.conf.j2
+        dest: /etc/nginx/sites-available/proxy.my.host
+      notify:
+        - Reload Nginx
+
+    - name: Create symbolic link for proxy.my.host
+      file:
+        src: /etc/nginx/sites-available/proxy.my.host
+        dest: /etc/nginx/sites-enabled/proxy.my.host
+        state: link
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded
+
+# ---
+# - name: Deploy nginx load balancer for proxy.my.host
+#   hosts: proxy.my.host
+#   become: yes
+#   roles:
+#     - role: proxy_role
+#   tasks:
+#     - name: Configure nginx for proxy.my.host
+#       template:
+#         src: nginx-proxy.conf.j2
+#         dest: /etc/nginx/sites-available/proxy.my.host
+#       notify:
+#         - Reload Nginx
+
+#     - name: Create symbolic link for proxy.my.host
+#       file:
+#         src: /etc/nginx/sites-available/proxy.my.host
+#         dest: /etc/nginx/sites-enabled/proxy.my.host
+#         state: link
+
+#   handlers:
+#     - name: Reload Nginx
+#       service:
+#         name: nginx
+#         state: reloaded

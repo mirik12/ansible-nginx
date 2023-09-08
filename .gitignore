@@ -1,0 +1,28 @@
+# Add vscode workspace settings
+!.vscode/*.code-workspace
+
+# Python compiled files
+**.pyc
+
+# Provisioning
+/nginx-config/roles/*
+/nginx-config/*.retry
+# Requirements need to be stored in the repo
+!/nginx-config/roles/requirements.yml
+
+# Tests
+/nginx-config/inventory/group_vars/test
+/nginx-config/inventory/test
+/nginx-config/test.yml
+
+# Pipenv
+/.venv
+
+# Vagrant
+.vagrant/
+
+# Project specific
+Taskfile.yml
+.env
+known_hosts
+
